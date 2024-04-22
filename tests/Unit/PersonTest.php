@@ -37,4 +37,16 @@ class PersonTest extends TestCase
 
         Person::factory()->create(['name' => $name]);
     }
+
+    /**
+     * A person is required to have a surname.
+     */
+    #[DataProvider(methodName: 'blanksProvider')]
+    public function test_person_requires_surname(?string $surname): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The surname field is required.');
+
+        Person::factory()->create(['surname' => $surname]);
+    }
 }

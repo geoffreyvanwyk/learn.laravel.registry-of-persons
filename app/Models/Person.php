@@ -21,6 +21,7 @@ class Person extends Model
         return [
             'rules' => [
                 'name' => ['required', 'string'],
+                'surname' => ['required', 'string'],
             ],
             'messages' => [],
         ];
