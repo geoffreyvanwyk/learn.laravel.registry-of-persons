@@ -49,4 +49,16 @@ class PersonTest extends TestCase
 
         Person::factory()->create(['surname' => $surname]);
     }
+
+    /**
+     * A person is required to have a South African Identity Number.
+     */
+    #[DataProvider(methodName: 'blanksProvider')]
+    public function test_person_requires_south_african_id(?string $southAfricanId): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The south african id field is required.');
+
+        Person::factory()->create(['south_african_id' => $southAfricanId]);
+    }
 }

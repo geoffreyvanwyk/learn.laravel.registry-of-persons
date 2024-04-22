@@ -22,6 +22,7 @@ class Person extends Model
             'rules' => [
                 'name' => ['required', 'string'],
                 'surname' => ['required', 'string'],
+                'south_african_id' => ['required'],
             ],
             'messages' => [],
         ];
