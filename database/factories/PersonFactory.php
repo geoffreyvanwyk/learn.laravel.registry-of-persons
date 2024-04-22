@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+use App\ValueObjects\SouthAfricanId;
+
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Person>
  */
@@ -19,6 +21,7 @@ class PersonFactory extends Factory
         return [
             'name' => fake()->firstName(),
             'surname' => fake()->lastName(),
+            'south_african_id' => new SouthAfricanId(fake()->idNumber()),
         ];
     }
 }

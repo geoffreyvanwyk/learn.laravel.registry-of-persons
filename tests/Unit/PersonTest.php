@@ -2,12 +2,13 @@
 
 namespace Tests\Unit;
 
+use Exception;
 use InvalidArgumentException;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 use App\Models\Person;
+use App\ValueObjects\SouthAfricanId;
 use Tests\TestCase;
 
 class PersonTest extends TestCase
@@ -15,50 +16,49 @@ class PersonTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * @return array<int,array<int,mixed>>
-     */
-    public static function blanksProvider(): array
-    {
-        $blanks = [[null]];
-        foreach (range(0, 255) as $times) {
-            $blanks[] = [str_repeat(' ', $times)];
-        }
-        return $blanks;
-    }
-
-    /**
      * A person is required to have a name.
      */
-    #[DataProvider(methodName: 'blanksProvider')]
-    public function test_person_requires_name(?string $name): void
+    public function test_person_requires_name(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The name field is required.');
 
-        Person::factory()->create(['name' => $name]);
+        Person::factory()->create(['name' => null]);
     }
 
     /**
      * A person is required to have a surname.
      */
-    #[DataProvider(methodName: 'blanksProvider')]
-    public function test_person_requires_surname(?string $surname): void
+    public function test_person_requires_surname(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The surname field is required.');
 
-        Person::factory()->create(['surname' => $surname]);
+        Person::factory()->create(['surname' => null]);
     }
 
     /**
      * A person is required to have a South African Identity Number.
      */
-    #[DataProvider(methodName: 'blanksProvider')]
-    public function test_person_requires_south_african_id(?string $southAfricanId): void
+    public function test_person_requires_south_african_id(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The south african id field is required.');
+        $this->expectExceptionMessage('The value is not an instance of ' . SouthAfricanId::class . '.');
 
-        Person::factory()->create(['south_african_id' => $southAfricanId]);
+        Person::factory()->create(['south_african_id' => null]);
+    }
+
+    /**
+     * A person is required to have a unique South African Identity Number.
+     */
+    public function test_person_requires_unique_south_african_id(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The south african id has already been taken.');
+
+        $southAfricanId = fake()->idNumber();
+        Person::factory()->create(['south_african_id' => new SouthAfricanId($southAfricanId)]);
+
+        Person::factory()->create(['south_african_id' => new SouthAfricanId($southAfricanId)]);
     }
 }

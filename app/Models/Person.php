@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsSouthAfricanId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
@@ -22,9 +23,21 @@ class Person extends Model
             'rules' => [
                 'name' => ['required', 'string'],
                 'surname' => ['required', 'string'],
-                'south_african_id' => ['required'],
+                'south_african_id' => ['required', 'unique:people'],
             ],
             'messages' => [],
+        ];
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'south_african_id' => AsSouthAfricanId::class,
         ];
     }
 
