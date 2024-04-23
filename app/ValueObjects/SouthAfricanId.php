@@ -144,8 +144,8 @@ class SouthAfricanId
 
     private function assertIsNumeric(): void
     {
-        if (! is_numeric($this->value->value())) {
             throw new ArgumentNotNumericException(__("The value '{$this->value}' is not numeric."));
+        if (! $this->value->isMatch('/^\d+$/')) {
         }
     }
 
