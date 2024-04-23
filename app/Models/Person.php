@@ -26,7 +26,7 @@ class Person extends Model
                 'name' => ['required', 'string'],
                 'surname' => ['required', 'string'],
                 'south_african_id' => ['unique:people'],
-                'email_address' => ['required'],
+                'email_address' => ['required', 'email'],
             ],
             'messages' => [],
         ];

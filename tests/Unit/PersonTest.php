@@ -71,4 +71,15 @@ class PersonTest extends TestCase
 
         Person::factory()->create(['email_address' => null]);
     }
+
+    /**
+     * A person's email address must be valid.
+     */
+    public function test_person_has_valid_email_address(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The email address field must be a valid email address.');
+
+        Person::factory()->create(['email_address' => 'not-valid-email-address']);
+    }
 }
