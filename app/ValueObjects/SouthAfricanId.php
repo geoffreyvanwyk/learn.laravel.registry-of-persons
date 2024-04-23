@@ -144,19 +144,19 @@ class SouthAfricanId
 
     private function assertIsNumeric(): void
     {
-            throw new ArgumentNotNumericException(__("The value '{$this->value}' is not numeric."));
         if (! $this->value->isMatch('/^\d+$/')) {
+            throw new ArgumentNotNumericException("The value '{$this->value}' is not numeric.");
         }
     }
 
     private function assertCorrectLength(): void
     {
         if ($this->value->length() < 13) {
-            throw new ArgumentTooShortException(__("The value '{$this->value}' is not exactly 13 digits long."));
+            throw new ArgumentTooShortException("The value '{$this->value}' is not exactly 13 digits long.");
         }
 
         if ($this->value->length() > 13) {
-            throw new ArgumentTooLongException(__("The value '{$this->value}' is not exactly 13 digits long."));
+            throw new ArgumentTooLongException("The value '{$this->value}' is not exactly 13 digits long.");
         }
     }
 
@@ -169,7 +169,7 @@ class SouthAfricanId
 
         if ($validator->fails()) {
             throw new ArgumentNotDateException(
-                __("The value '{$this->value}' does not start with a date in the format 'yymmdd'.")
+                "The value '{$this->value}' does not start with a date in the format 'yymmdd'."
             );
         }
     }
@@ -178,7 +178,7 @@ class SouthAfricanId
     {
         if (! in_array($this->citizenshipSegment()->value(), ['0', '1'])) {
             throw new InvalidCitizenshipClassificationException(
-                __("The value '{$this->value}' does not have a valid citizenship classification.")
+                "The value '{$this->value}' does not have a valid citizenship classification."
             );
         }
     }
@@ -192,7 +192,7 @@ class SouthAfricanId
             ->value();
 
         if (! (Luhn::computeCheckDigit($otherDigits) === $this->checksumSegment()->value())) {
-            throw new InvalidChecksumDigitException(__("The value '{$this->value}' has an invalid checksum digit."));
+            throw new InvalidChecksumDigitException("The value '{$this->value}' has an invalid checksum digit.");
         }
     }
 }
