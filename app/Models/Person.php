@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
-use App\Casts\AsSouthAfricanId;
+use InvalidArgumentException;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
-use InvalidArgumentException;
+
+use App\Casts\AsSouthAfricanId;
 
 class Person extends Model
 {
