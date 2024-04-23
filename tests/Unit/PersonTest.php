@@ -62,6 +62,17 @@ class PersonTest extends TestCase
     }
 
     /**
+     * A person is required to have a mobile number.
+     */
+    public function test_person_requires_mobile_number(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The mobile number field is required.');
+
+        Person::factory()->create(['mobile_number' => null]);
+    }
+
+    /**
      * A person is required to have an email address.
      */
     public function test_person_requires_email_address(): void

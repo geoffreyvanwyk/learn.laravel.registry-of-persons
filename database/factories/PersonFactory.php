@@ -23,6 +23,7 @@ class PersonFactory extends Factory
             'surname' => fake()->lastName(),
             'south_african_id' => new SouthAfricanId(fake()->idNumber()),
             'email_address' => fake()->email(),
+            'mobile_number' => fake()->mobileNumber(),
         ];
     }
 }
