@@ -60,4 +60,15 @@ class PersonTest extends TestCase
 
         Person::factory()->create(['south_african_id' => new SouthAfricanId($southAfricanId)]);
     }
+
+    /**
+     * A person is required to have an email address.
+     */
+    public function test_person_requires_email_address(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The email address field is required.');
+
+        Person::factory()->create(['email_address' => null]);
+    }
 }

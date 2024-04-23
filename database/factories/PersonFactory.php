@@ -22,6 +22,7 @@ class PersonFactory extends Factory
             'name' => fake()->firstName(),
             'surname' => fake()->lastName(),
             'south_african_id' => new SouthAfricanId(fake()->idNumber()),
+            'email_address' => fake()->email(),
         ];
     }
 }

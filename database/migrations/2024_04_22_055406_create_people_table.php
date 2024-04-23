@@ -15,6 +15,7 @@ return new class () extends Migration {
             $table->string('name');
             $table->string('surname');
             $table->string('south_african_id');
+            $table->string('email_address');
             $table->timestamps();
         });
     }

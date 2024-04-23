@@ -19,13 +19,14 @@ class Person extends Model
     *
     * @return array<string,array<string,mixed>>
     */
-    public static function attributeRules(): array
+    public static function validationRules(): array
     {
         return [
             'rules' => [
                 'name' => ['required', 'string'],
                 'surname' => ['required', 'string'],
                 'south_african_id' => ['unique:people'],
+                'email_address' => ['required'],
             ],
             'messages' => [],
         ];
@@ -49,7 +50,7 @@ class Person extends Model
     protected static function booted(): void
     {
         static::saving(function (Person $person) {
-            $attributeRules = static::attributeRules();
+            $attributeRules = static::validationRules();
 
             $validator = Validator::make(
                 $person->getAttributes(),
