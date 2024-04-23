@@ -8,11 +8,29 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use App\Models\Person;
 use App\ValueObjects\SouthAfricanId;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class PersonTest extends TestCase
 {
     use RefreshDatabase;
+
+    /**
+     * @return array<array<strings>>
+     */
+    public static function invalidMobileNumbers(): array
+    {
+        return [
+            ['9825566344'],
+            ['+278140582333'],
+            ['061-713*4950'],
+            ['060 423 935'],
+            ['076 014 349911111'],
+            ['276-598-0143'],
+            ['+17609611676'],
+            ['2760579039'],
+        ];
+    }
 
     /**
      * A person is required to have a name.
@@ -70,6 +88,18 @@ class PersonTest extends TestCase
         $this->expectExceptionMessage('The mobile number field is required.');
 
         Person::factory()->create(['mobile_number' => null]);
+    }
+
+    /**
+     * A person's mobile number must be valid.
+     */
+    #[DataProvider(methodName: 'invalidMobileNumbers')]
+    public function test_person_has_valid_mobile_number(string $mobileNumber): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The mobile number field format is invalid.');
+
+        Person::factory()->create(['mobile_number' => $mobileNumber]);
     }
 
     /**

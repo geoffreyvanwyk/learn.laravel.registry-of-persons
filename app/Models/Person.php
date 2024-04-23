@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,7 +28,7 @@ class Person extends Model
                 'name' => ['required', 'string'],
                 'surname' => ['required', 'string'],
                 'south_african_id' => ['unique:people'],
-                'mobile_number' => ['required'],
+                'mobile_number' => ['required', 'regex:/^0\d{9}$/'],
                 'email_address' => ['required', 'email'],
             ],
             'messages' => [],
@@ -63,5 +65,20 @@ class Person extends Model
                 throw new InvalidArgumentException($validator->messages()->first());
             }
         });
+    }
+
+    /**
+     * Get or set the person's mobile number.
+     */
+    protected function mobileNumber(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value) => Str::of($value)
+                ->replace(' ', '')
+                ->replace('-', '')
+                ->replace('+27', '0')
+                ->replaceMatches('/^27/', '0')
+                ->value(),
+        );
     }
 }
