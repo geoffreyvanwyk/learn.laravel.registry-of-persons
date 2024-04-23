@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use Exception;
 use InvalidArgumentException;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
