@@ -30,6 +30,7 @@ class Person extends Model
                 'south_african_id' => ['unique:people'],
                 'mobile_number' => ['required', 'regex:/^0\d{9}$/'],
                 'email_address' => ['required', 'email'],
+                'birth_date' => ['required', 'date_format:Y-m-d', 'before_or_equal:today'],
             ],
             'messages' => [],
         ];
@@ -44,6 +45,7 @@ class Person extends Model
     {
         return [
             'south_african_id' => AsSouthAfricanId::class,
+            'birth_date' => 'datetime:Y-m-d',
         ];
     }
 
@@ -63,6 +65,10 @@ class Person extends Model
 
             if ($validator->stopOnFirstFailure()->fails()) {
                 throw new InvalidArgumentException($validator->messages()->first());
+            }
+
+            if($person->birth_date->format('ymd') !== $person->south_african_id->dateSegment()->value()) {
+                throw new InvalidArgumentException('The birth date field does not match the south african id field.');
             }
         });
     }

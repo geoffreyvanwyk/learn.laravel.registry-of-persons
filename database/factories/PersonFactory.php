@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use Carbon\Carbon;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 use App\ValueObjects\SouthAfricanId;
@@ -18,12 +20,18 @@ class PersonFactory extends Factory
      */
     public function definition(): array
     {
+        $southAfricanId = new SouthAfricanId(fake()->idNumber());
+
         return [
             'name' => fake()->firstName(),
             'surname' => fake()->lastName(),
-            'south_african_id' => new SouthAfricanId(fake()->idNumber()),
-            'email_address' => fake()->email(),
+            'south_african_id' => $southAfricanId,
             'mobile_number' => fake()->mobileNumber(),
+            'email_address' => fake()->email(),
+            'birth_date' => '19' . Carbon::createFromFormat(
+                'ymd',
+                $southAfricanId->dateSegment()->value()
+            )->format('y-m-d')
         ];
     }
 }

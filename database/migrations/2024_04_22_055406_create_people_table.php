@@ -17,6 +17,7 @@ return new class () extends Migration {
             $table->string('south_african_id');
             $table->string('mobile_number');
             $table->string('email_address');
+            $table->timestamp('birth_date');
             $table->timestamps();
         });
     }
