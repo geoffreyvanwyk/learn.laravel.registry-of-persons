@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\Language;
 use InvalidArgumentException;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -163,6 +164,16 @@ class PersonTest extends TestCase
         $this->expectExceptionMessage('The language id field is required.');
 
         Person::factory()->create(['language_id' => null]);
+    }
+
+    public function test_person_has_valid_language(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The selected language id is invalid.');
+
+        Language::factory()->create(['name' => 'English']);
+
+        Person::factory()->create(['language_id' => 2]);
     }
 
     /**

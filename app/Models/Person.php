@@ -32,7 +32,7 @@ class Person extends Model
                 'mobile_number' => ['required', 'regex:/^0\d{9}$/'],
                 'email_address' => ['required', 'email'],
                 'birth_date' => ['required', 'date_format:Y-m-d', 'before_or_equal:today'],
-                'language_id' => ['required'],
+                'language_id' => ['required', 'exists:languages,id'],
             ],
             'messages' => [],
         ];
