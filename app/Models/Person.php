@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
@@ -31,6 +32,7 @@ class Person extends Model
                 'mobile_number' => ['required', 'regex:/^0\d{9}$/'],
                 'email_address' => ['required', 'email'],
                 'birth_date' => ['required', 'date_format:Y-m-d', 'before_or_equal:today'],
+                'language_id' => ['required'],
             ],
             'messages' => [],
         ];
@@ -86,5 +88,10 @@ class Person extends Model
                 ->replaceMatches('/^27/', '0')
                 ->value(),
         );
+    }
+
+    public function language(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Language::class);
     }
 }

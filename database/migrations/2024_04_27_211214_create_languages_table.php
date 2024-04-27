@@ -10,15 +10,9 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::create('people', function (Blueprint $table) {
+        Schema::create('languages', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('surname');
-            $table->string('south_african_id');
-            $table->string('mobile_number');
-            $table->string('email_address');
-            $table->timestamp('birth_date');
-            $table->foreignId('language_id')->references('id')->on('languages');
             $table->timestamps();
         });
     }
@@ -28,6 +22,6 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('people');
+        Schema::dropIfExists('languages');
     }
 };

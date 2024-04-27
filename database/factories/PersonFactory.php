@@ -31,7 +31,7 @@ class PersonFactory extends Factory
             'birth_date' => '19' . Carbon::createFromFormat(
                 'ymd',
                 $southAfricanId->dateSegment()->value()
-            )->format('y-m-d')
+            )->format('y-m-d'),
         ];
     }
 }

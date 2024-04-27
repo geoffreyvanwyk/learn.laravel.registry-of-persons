@@ -61,12 +61,12 @@ class PersonTest extends TestCase
         $southAfricanId = new SouthAfricanId(fake()->idNumber());
         $birthDate = $this->matchingBirthDate($southAfricanId);
 
-        Person::factory()->create([
+        Person::factory()->forLanguage(['name' => 'English'])->create([
             'south_african_id' => $southAfricanId,
             'birth_date' => $birthDate,
         ]);
 
-        Person::factory()->create([
+        Person::factory()->forLanguage(['name' => 'English'])->create([
             'south_african_id' => $southAfricanId,
             'birth_date' => $birthDate,
         ]);
@@ -140,15 +140,29 @@ class PersonTest extends TestCase
         Person::factory()->create(['birth_date' => Carbon::now()->addDay()->format('Y-m-d')]);
     }
 
+    /**
+     * A person's birth date must match the date segment of his South African Identity Number.
+     */
     public function test_person_birthdate_match_south_african_id(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The birth date field does not match the south african id field.');
 
-        Person::factory()->create([
+        Person::factory()->forLanguage(['name' => 'English'])->create([
             'birth_date' => '1984-03-13',
             'south_african_id' => new SouthAfricanId('6812060311083'),
         ]);
+    }
+
+    /**
+     * A person is required to have a language.
+     */
+    public function test_person_requires_a_language(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The language id field is required.');
+
+        Person::factory()->create(['language_id' => null]);
     }
 
     /**
@@ -180,4 +194,5 @@ class PersonTest extends TestCase
             $southAfricanId->dateSegment()->value()
         )->format('y-m-d');
     }
+
 }
