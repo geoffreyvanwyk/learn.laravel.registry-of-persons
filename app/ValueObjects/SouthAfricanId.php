@@ -31,7 +31,7 @@ class SouthAfricanId
     /**
      * Creates a new instance of the value object.
      */
-    public function __construct(string $value)
+    public function __construct(?string $value)
     {
         $this->value = Str::of($value)->replace(' ', '');
 

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+use App\Models\Language;
 use App\ValueObjects\SouthAfricanId;
 
 /**
@@ -32,6 +33,7 @@ class PersonFactory extends Factory
                 'ymd',
                 $southAfricanId->dateSegment()->value()
             )->format('y-m-d'),
+            'language_id' => (Language::factory()->create(['name' => 'English']))->id,
         ];
     }
 }

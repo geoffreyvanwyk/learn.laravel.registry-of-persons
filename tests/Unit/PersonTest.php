@@ -2,14 +2,14 @@
 
 namespace Tests\Unit;
 
-use App\Models\Language;
 use InvalidArgumentException;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-use Carbon\Carbon;
-
+use App\Models\Language;
 use App\Models\Person;
 use App\ValueObjects\SouthAfricanId;
 use Tests\TestCase;
@@ -23,10 +23,16 @@ class PersonTest extends TestCase
      */
     public function test_person_requires_name(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The name field is required.');
+        try {
+            Person::factory()->create(['name' => null]);
 
-        Person::factory()->create(['name' => null]);
+            $this->fail(
+                'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
+            );
+        } catch (ValidationException $e) {
+            $this->assertTrue($e->errorBag->has('name'));
+            $this->assertEquals('The name field is required.', $e->errorBag->first('name'));
+        }
     }
 
     /**
@@ -34,10 +40,16 @@ class PersonTest extends TestCase
      */
     public function test_person_requires_surname(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The surname field is required.');
+        try {
+            Person::factory()->create(['surname' => null]);
 
-        Person::factory()->create(['surname' => null]);
+            $this->fail(
+                'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
+            );
+        } catch (ValidationException $e) {
+            $this->assertTrue($e->errorBag->has('surname'));
+            $this->assertEquals('The surname field is required.', $e->errorBag->first('surname'));
+        }
     }
 
     /**
@@ -45,10 +57,16 @@ class PersonTest extends TestCase
      */
     public function test_person_requires_south_african_id(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The value is not an instance of ' . SouthAfricanId::class . '.');
+        try {
+            Person::factory()->create(['south_african_id' => null]);
 
-        Person::factory()->create(['south_african_id' => null]);
+            $this->fail(
+                'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
+            );
+        } catch (ValidationException $e) {
+            $this->assertTrue($e->errorBag->has('south_african_id'));
+            $this->assertEquals('The south african id field is required.', $e->errorBag->first('south_african_id'));
+        }
     }
 
     /**
@@ -56,22 +74,28 @@ class PersonTest extends TestCase
      */
     public function test_person_requires_unique_south_african_id(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The south african id has already been taken.');
-
-        $southAfricanId = new SouthAfricanId(fake()->idNumber());
+        $southAfricanId = fake()->idNumber();
         $birthDate = $this->matchingBirthDate($southAfricanId);
-
-        Person::factory()->forLanguage(['name' => 'English'])->create([
+        Person::factory()->create([
             'south_african_id' => $southAfricanId,
             'birth_date' => $birthDate,
         ]);
 
-        Person::factory()->forLanguage(['name' => 'English'])->create([
-            'south_african_id' => $southAfricanId,
-            'birth_date' => $birthDate,
-        ]);
 
+        try {
+            Person::factory()->create([
+                'south_african_id' => $southAfricanId,
+                'birth_date' => $birthDate,
+            ]);
+
+            $this->fail(
+                'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
+            );
+        } catch (ValidationException $e) {
+            $this->assertTrue($e->errorBag->has('south_african_id'));
+            $this->assertEquals('The south african id has already been taken.', $e->errorBag->first('south_african_id'));
+
+        }
     }
 
     /**
@@ -79,10 +103,16 @@ class PersonTest extends TestCase
      */
     public function test_person_requires_mobile_number(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The mobile number field is required.');
+        try {
+            Person::factory()->create(['mobile_number' => null]);
 
-        Person::factory()->create(['mobile_number' => null]);
+            $this->fail(
+                'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
+            );
+        } catch (ValidationException $e) {
+            $this->assertTrue($e->errorBag->has('mobile_number'));
+            $this->assertEquals('The mobile number field is required.', $e->errorBag->first('mobile_number'));
+        }
     }
 
     /**
@@ -91,10 +121,16 @@ class PersonTest extends TestCase
     #[DataProvider(methodName: 'invalidMobileNumbers')]
     public function test_person_has_valid_mobile_number(string $mobileNumber): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The mobile number field format is invalid.');
+        try {
+            Person::factory()->create(['mobile_number' => $mobileNumber]);
 
-        Person::factory()->create(['mobile_number' => $mobileNumber]);
+            $this->fail(
+                'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
+            );
+        } catch (ValidationException $e) {
+            $this->assertTrue($e->errorBag->has('mobile_number'));
+            $this->assertEquals('The mobile number field format is invalid.', $e->errorBag->first('mobile_number'));
+        }
     }
 
     /**
@@ -102,10 +138,16 @@ class PersonTest extends TestCase
      */
     public function test_person_requires_email_address(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The email address field is required.');
+        try {
+            Person::factory()->create(['email_address' => null]);
 
-        Person::factory()->create(['email_address' => null]);
+            $this->fail(
+                'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
+            );
+        } catch (ValidationException $e) {
+            $this->assertTrue($e->errorBag->has('email_address'));
+            $this->assertEquals('The email address field is required.', $e->errorBag->first('email_address'));
+        }
     }
 
     /**
@@ -113,10 +155,19 @@ class PersonTest extends TestCase
      */
     public function test_person_has_valid_email_address(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The email address field must be a valid email address.');
+        try {
+            Person::factory()->create(['email_address' => 'not-valid-email-address']);
 
-        Person::factory()->create(['email_address' => 'not-valid-email-address']);
+            $this->fail(
+                'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
+            );
+        } catch (ValidationException $e) {
+            $this->assertTrue($e->errorBag->has('email_address'));
+            $this->assertEquals(
+                'The email address field must be a valid email address.',
+                $e->errorBag->first('email_address')
+            );
+        }
     }
 
     /**
@@ -124,10 +175,17 @@ class PersonTest extends TestCase
      */
     public function test_person_requires_birth_date(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The birth date field is required.');
+        try {
+            Person::factory()->create(['birth_date' => null]);
 
-        Person::factory()->create(['birth_date' => null]);
+            $this->fail(
+                'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
+            );
+        } catch (ValidationException $e) {
+            $this->assertTrue($e->errorBag->has('birth_date'));
+            $this->assertEquals('The birth date field is required.', $e->errorBag->first('birth_date'));
+
+        }
     }
 
     /**
@@ -135,10 +193,20 @@ class PersonTest extends TestCase
      */
     public function test_person_birth_date_not_in_future(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The birth date field must be a date before or equal to today.');
+        try {
+            Person::factory()->create(['birth_date' => Carbon::now()->addDay()->format('Y-m-d')]);
 
-        Person::factory()->create(['birth_date' => Carbon::now()->addDay()->format('Y-m-d')]);
+            $this->fail(
+                'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
+            );
+        } catch (ValidationException $e) {
+            $this->assertTrue($e->errorBag->has('birth_date'));
+            $this->assertEquals(
+                'The birth date field must be a date before or equal to today.',
+                $e->errorBag->first('birth_date')
+            );
+
+        }
     }
 
     /**
@@ -146,13 +214,23 @@ class PersonTest extends TestCase
      */
     public function test_person_birthdate_match_south_african_id(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The birth date field does not match the south african id field.');
+        try {
+            Person::factory()->create([
+                'birth_date' => '1984-03-13',
+                'south_african_id' => '6812060311083',
+            ]);
 
-        Person::factory()->forLanguage(['name' => 'English'])->create([
-            'birth_date' => '1984-03-13',
-            'south_african_id' => new SouthAfricanId('6812060311083'),
-        ]);
+            $this->fail(
+                'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
+            );
+        } catch (ValidationException $e) {
+            $this->assertTrue($e->errorBag->has('birth_date'));
+            $this->assertEquals(
+                'The birth date field does not match the South African ID field.',
+                $e->errorBag->first('birth_date')
+            );
+
+        }
     }
 
     /**
@@ -160,20 +238,33 @@ class PersonTest extends TestCase
      */
     public function test_person_requires_a_language(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The language id field is required.');
+        try {
+            Person::factory()->create(['language_id' => null]);
 
-        Person::factory()->create(['language_id' => null]);
+            $this->fail(
+                'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
+            );
+        } catch (ValidationException $e) {
+            $this->assertTrue($e->errorBag->has('language_id'));
+            $this->assertEquals('The language id field is required.', $e->errorBag->first('language_id'));
+        }
     }
 
     public function test_person_has_valid_language(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The selected language id is invalid.');
-
         Language::factory()->create(['name' => 'English']);
 
-        Person::factory()->create(['language_id' => 2]);
+
+        try {
+            Person::factory()->create(['language_id' => 3]);
+
+            $this->fail(
+                'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
+            );
+        } catch (ValidationException $e) {
+            $this->assertTrue($e->errorBag->has('language_id'));
+            $this->assertEquals('The selected language id is invalid.', $e->errorBag->first('language_id'));
+        }
     }
 
     /**
@@ -198,11 +289,11 @@ class PersonTest extends TestCase
     /**
      * Returns a full date that matches the given South African Identity Number.
      */
-    private function matchingBirthDate(SouthAfricanId $southAfricanId): string
+    private function matchingBirthDate(string $southAfricanId): string
     {
         return '19' . Carbon::createFromFormat(
             'ymd',
-            $southAfricanId->dateSegment()->value()
+            (new SouthAfricanId($southAfricanId))->dateSegment()->value()
         )->format('y-m-d');
     }
 
