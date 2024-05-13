@@ -139,14 +139,14 @@ class PersonTest extends TestCase
     public function test_person_requires_email_address(): void
     {
         try {
-            Person::factory()->create(['email_address' => null]);
+            Person::factory()->create(['email' => null]);
 
             $this->fail(
                 'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
             );
         } catch (ValidationException $e) {
-            $this->assertTrue($e->errorBag->has('email_address'));
-            $this->assertEquals('The email address field is required.', $e->errorBag->first('email_address'));
+            $this->assertTrue($e->errorBag->has('email'));
+            $this->assertEquals('The email field is required.', $e->errorBag->first('email'));
         }
     }
 
@@ -156,16 +156,16 @@ class PersonTest extends TestCase
     public function test_person_has_valid_email_address(): void
     {
         try {
-            Person::factory()->create(['email_address' => 'not-valid-email-address']);
+            Person::factory()->create(['email' => 'not-valid-email-address']);
 
             $this->fail(
                 'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
             );
         } catch (ValidationException $e) {
-            $this->assertTrue($e->errorBag->has('email_address'));
+            $this->assertTrue($e->errorBag->has('email'));
             $this->assertEquals(
-                'The email address field must be a valid email address.',
-                $e->errorBag->first('email_address')
+                'The email field must be a valid email address.',
+                $e->errorBag->first('email')
             );
         }
     }

@@ -59,7 +59,7 @@ class AddPersonAction
         $person->surname = $this->request->surname;
         $person->south_african_id = new SouthAfricanId($this->request->southAfricanId);
         $person->mobile_number = new SouthAfricanMobileNumber($this->request->mobileNumber);
-        $person->email_address = $this->request->emailAddress;
+        $person->email = $this->request->emailAddress;
         $person->birth_date = $this->request->birthDate;
         $person->language_id = $this->request->languageId;
         $person->save();

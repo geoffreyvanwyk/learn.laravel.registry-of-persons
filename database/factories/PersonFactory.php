@@ -49,7 +49,7 @@ class PersonFactory extends Factory
             'surname' => fake()->lastName(),
             'south_african_id' => $southAfricanId,
             'mobile_number' => new SouthAfricanMobileNumber(fake()->mobileNumber()),
-            'email_address' => fake()->email(),
+            'email' => fake()->email(),
             'birth_date' => '19' . Carbon::createFromFormat(
                 'ymd',
                 $southAfricanId->dateSegment()->value()

@@ -16,14 +16,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Notifications\Notifiable;
 
 use App\Casts\AsSouthAfricanId;
 use App\Casts\AsSouthAfricanMobileNumber;
-use App\Rules\BirthDateMatchSouthAfricanId as BirthDateMatchSouthAfricanIdRule;
-use App\Rules\SouthAfricanId as SouthAfricanIdRule;
-use App\Rules\SouthAfricanMobileNumber as SouthAfricanMobileNumberRule;
+use App\Observers\PersonObserver;
+use App\Rules\BirthDateMatchSouthAfricanId;
+use App\Rules\SouthAfricanId;
+use App\Rules\SouthAfricanMobileNumber;
 
 /**
  * Model of the Person entity.
@@ -33,8 +36,11 @@ use App\Rules\SouthAfricanMobileNumber as SouthAfricanMobileNumberRule;
  * @copyright  2024 Geoffrey Bernardo van Wyk {@link https://geoffreyvanwyk.dev}
  * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
+#[ObservedBy([PersonObserver::class])]
 class Person extends BaseModel
 {
+    use Notifiable;
+
     /**
      * @inheritDoc
      */
@@ -44,10 +50,10 @@ class Person extends BaseModel
             'rules' => [
                 'name' => ['required', 'string'],
                 'surname' => ['required', 'string'],
-                'south_african_id' => ['required', new SouthAfricanIdRule(), 'unique:people'],
-                'mobile_number' => ['required', new SouthAfricanMobileNumberRule()],
-                'email_address' => ['required', 'email'],
-                'birth_date' => ['required','date_format:Y-m-d', 'before_or_equal:today', new BirthDateMatchSouthAfricanIdRule()],
+                'south_african_id' => ['required', new SouthAfricanId(), 'unique:people'],
+                'mobile_number' => ['required', new SouthAfricanMobileNumber()],
+                'email' => ['required', 'email'],
+                'birth_date' => ['required','date_format:Y-m-d', 'before_or_equal:today', new BirthDateMatchSouthAfricanId()],
                 'language_id' => ['required', 'exists:languages,id'],
             ],
             'messages' => [],

@@ -38,7 +38,7 @@ return new class () extends Migration {
             $table->string('surname');
             $table->string('south_african_id');
             $table->string('mobile_number');
-            $table->string('email_address');
+            $table->string('email');
             $table->date('birth_date');
             $table->foreignId('language_id')->references('id')->on('languages');
             $table->timestamps();

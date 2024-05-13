@@ -17,6 +17,7 @@
 namespace Tests\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 
 use App\Actions\AddPersonAction;
@@ -24,6 +25,7 @@ use App\DataTransferObjects\AddPersonRequest;
 use App\Models\Interest;
 use App\Models\Language;
 use App\Models\Person;
+use App\Notifications\PersonRegistered;
 use App\ValueObjects\SouthAfricanId;
 use App\ValueObjects\SouthAfricanMobileNumber;
 use Tests\TestCase;
@@ -74,7 +76,7 @@ class AddPersonActionTest extends TestCase
             'surname' => $request->surname,
             'south_african_id' => (new SouthAfricanId($request->southAfricanId))->value(),
             'mobile_number' => (new SouthAfricanMobileNumber($request->mobileNumber))->value(),
-            'email_address' => $request->emailAddress,
+            'email' => $request->emailAddress,
             'birth_date' => $request->birthDate,
             'language_id' => $request->languageId,
         ]);
@@ -91,7 +93,7 @@ class AddPersonActionTest extends TestCase
     }
 
     /**
-     * An added person must be interested in at least on topic.
+     * An added person must be interested in at least one topic.
      */
     public function test_person_has_at_least_one_interest(): void
     {
@@ -162,5 +164,37 @@ class AddPersonActionTest extends TestCase
             $this->assertDatabaseCount('people', 0);
             $this->assertDatabaseCount('languages', 1);
         }
+    }
+
+    /**
+     * A person must be notified of their registration.
+     */
+    public function test_person_is_notified_of_registration(): void
+    {
+        // --- Arrange ---------------------------------------------------------
+
+        Notification::fake();
+
+        $southAfricanId = fake()->idNumber();
+        $numberOfInterests = 3;
+
+        $request = new AddPersonRequest(
+            name: fake()->firstName(),
+            surname: fake()->lastName(),
+            southAfricanId: $southAfricanId,
+            mobileNumber:  fake()->mobileNumber(),
+            emailAddress: fake()->safeEmail(),
+            birthDate: $this->matchingBirthDate($southAfricanId),
+            languageId: (Language::factory()->create())->id,
+            interests: (Interest::factory()->count($numberOfInterests)->create())->pluck('id')->all(),
+        );
+
+        // --- Act -------------------------------------------------------------
+        $action = new AddPersonAction($request);
+        $person = $action->execute();
+
+        // --- Assert ----------------------------------------------------------
+        Notification::assertCount(1);
+        Notification::assertSentTo([$person], PersonRegistered::class);
     }
 }
