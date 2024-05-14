@@ -57,7 +57,7 @@ class AddPersonActionTest extends TestCase
             mobileNumber:  fake()->mobileNumber(),
             emailAddress: fake()->safeEmail(),
             birthDate: $this->matchingBirthDate($southAfricanId),
-            languageId: (Language::factory()->create())->id,
+            languageId: (Language::all()->random())->id,
             interests: (Interest::factory()->count($numberOfInterests)->create())->pluck('id')->all(),
         );
 
@@ -69,8 +69,8 @@ class AddPersonActionTest extends TestCase
         $this->assertTrue($person instanceof Person);
         $this->assertEquals(1, $person->id);
 
-
         $this->assertDatabaseCount('people', 1);
+
         $this->assertDatabaseHas('people', [
             'name' => $request->name,
             'surname' => $request->surname,
@@ -81,9 +81,8 @@ class AddPersonActionTest extends TestCase
             'language_id' => $request->languageId,
         ]);
 
-        $this->assertDatabaseCount('languages', 1);
-
         $this->assertDatabaseCount('interests', $numberOfInterests);
+
         for ($i = 1; $i <= $numberOfInterests; $i++) {
             $this->assertDatabaseHas('interest_person', [
                 'interest_id' => $i,
@@ -107,7 +106,7 @@ class AddPersonActionTest extends TestCase
             mobileNumber:  fake()->mobileNumber(),
             emailAddress: fake()->safeEmail(),
             birthDate: $this->matchingBirthDate($southAfricanId),
-            languageId: (Language::factory()->create())->id,
+            languageId: (Language::all()->random())->id,
             interests: [],
         );
 
@@ -125,7 +124,6 @@ class AddPersonActionTest extends TestCase
             $this->assertEquals('A person must be interested in at least one topic.', $e->errorBag->first('interests'));
             $this->assertDatabaseCount('interests', 0);
             $this->assertDatabaseCount('people', 0);
-            $this->assertDatabaseCount('languages', 1);
         }
     }
 
@@ -144,7 +142,7 @@ class AddPersonActionTest extends TestCase
             mobileNumber:  fake()->mobileNumber(),
             emailAddress: fake()->safeEmail(),
             birthDate: $this->matchingBirthDate($southAfricanId),
-            languageId: (Language::factory()->create())->id,
+            languageId: (Language::all()->random())->id,
             interests: [1, 2, 3],
         );
 
@@ -162,7 +160,6 @@ class AddPersonActionTest extends TestCase
             $this->assertEquals('The interests do not exist.', $e->errorBag->first('interests'));
             $this->assertDatabaseCount('interests', 0);
             $this->assertDatabaseCount('people', 0);
-            $this->assertDatabaseCount('languages', 1);
         }
     }
 
@@ -176,7 +173,6 @@ class AddPersonActionTest extends TestCase
         Notification::fake();
 
         $southAfricanId = fake()->idNumber();
-        $numberOfInterests = 3;
 
         $request = new AddPersonRequest(
             name: fake()->firstName(),
@@ -185,8 +181,8 @@ class AddPersonActionTest extends TestCase
             mobileNumber:  fake()->mobileNumber(),
             emailAddress: fake()->safeEmail(),
             birthDate: $this->matchingBirthDate($southAfricanId),
-            languageId: (Language::factory()->create())->id,
-            interests: (Interest::factory()->count($numberOfInterests)->create())->pluck('id')->all(),
+            languageId: (Language::all()->random())->id,
+            interests: (Interest::factory()->count(3)->create())->pluck('id')->all(),
         );
 
         // --- Act -------------------------------------------------------------

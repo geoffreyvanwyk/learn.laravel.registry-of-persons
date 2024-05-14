@@ -54,7 +54,7 @@ class PersonFactory extends Factory
                 'ymd',
                 $southAfricanId->dateSegment()->value()
             )->format('y-m-d'),
-            'language_id' => (Language::factory()->create())->id,
+            'language_id' => (Language::all()->random())->id,
         ];
     }
 }

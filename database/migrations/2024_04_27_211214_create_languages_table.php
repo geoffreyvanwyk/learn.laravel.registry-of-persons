@@ -34,7 +34,7 @@ return new class () extends Migration {
     {
         Schema::create('languages', function (Blueprint $table) {
             $table->id();
-            $table->string('code', length: 2)->unique();
+            $table->string('code', length: 3)->unique()->comment('Three-letter ISO 639 language code.');
             $table->timestamps();
         });
     }

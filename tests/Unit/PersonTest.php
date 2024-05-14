@@ -252,15 +252,8 @@ class PersonTest extends TestCase
 
     public function test_person_has_valid_language(): void
     {
-        Language::factory()->create(['code' => 'en']);
-
         try {
-            // The factory has already inserted a Language while making the
-            // Person, before the language_id is overridden here. That means 2
-            // Lanuages in the database before the Person is created here
-            // (counting the one above). Before create is called on the factory
-            // here, Language::count() will still be 1.
-            Person::factory()->create(['language_id' => Language::count() + 2]);
+            Person::factory()->create(['language_id' => Language::count() + 1]);
 
             $this->fail(
                 'Failed asserting that exception of type \Illuminate\Validation\ValidationException was thrown.'
