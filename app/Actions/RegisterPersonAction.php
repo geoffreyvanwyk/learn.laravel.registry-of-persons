@@ -19,7 +19,7 @@ namespace App\Actions;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-use App\DataTransferObjects\AddPersonRequest;
+use App\DataTransferObjects\RegisterPersonRequest;
 use App\Models\Person;
 use App\ValueObjects\SouthAfricanId;
 use App\ValueObjects\SouthAfricanMobileNumber;
@@ -32,18 +32,18 @@ use App\ValueObjects\SouthAfricanMobileNumber;
  * @copyright  2024 Geoffrey Bernardo van Wyk {@link https://geoffreyvanwyk.dev}
  * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
-class AddPersonAction
+class RegisterPersonAction
 {
     /**
      * Data transfer object containing all the data required to add a person to the
      * registry.
      */
-    private AddPersonRequest $request;
+    private RegisterPersonRequest $request;
 
     /**
      * Create new instance of the action.
      */
-    public function __construct(AddPersonRequest $request)
+    public function __construct(RegisterPersonRequest $request)
     {
         $this->request = $request;
         $this->validateRequest();

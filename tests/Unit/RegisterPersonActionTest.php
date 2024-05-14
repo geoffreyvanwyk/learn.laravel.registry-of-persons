@@ -20,8 +20,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 
-use App\Actions\AddPersonAction;
-use App\DataTransferObjects\AddPersonRequest;
+use App\Actions\RegisterPersonAction;
+use App\DataTransferObjects\RegisterPersonRequest;
 use App\Models\Interest;
 use App\Models\Language;
 use App\Models\Person;
@@ -31,13 +31,13 @@ use App\ValueObjects\SouthAfricanMobileNumber;
 use Tests\TestCase;
 
 /**
- * Unit test for \App\Actions\AddPersonAction.
+ * Unit test for \App\Actions\RegisterPersonAction.
  *
  * @author     Geoffrey Bernardo van Wyk <geoffrey@vanwyk.biz>
  * @copyright  2024 Geoffrey Bernardo van Wyk {@link https://geoffreyvanwyk.dev}
  * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
-class AddPersonActionTest extends TestCase
+class RegisterPersonActionTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -50,7 +50,7 @@ class AddPersonActionTest extends TestCase
         $southAfricanId = fake()->idNumber();
         $numberOfInterests = 3;
 
-        $request = new AddPersonRequest(
+        $request = new RegisterPersonRequest(
             name: fake()->firstName(),
             surname: fake()->lastName(),
             southAfricanId: $southAfricanId,
@@ -58,11 +58,11 @@ class AddPersonActionTest extends TestCase
             emailAddress: fake()->safeEmail(),
             birthDate: $this->matchingBirthDate($southAfricanId),
             languageId: (Language::all()->random())->id,
-            interests: (Interest::factory()->count($numberOfInterests)->create())->pluck('id')->all(),
+            interests: Interest::all()->random($numberOfInterests)->pluck('id')->all(),
         );
 
         // --- Act -------------------------------------------------------------
-        $action = new AddPersonAction($request);
+        $action = new RegisterPersonAction($request);
         $person = $action->execute();
 
         // --- Assert ----------------------------------------------------------
@@ -81,11 +81,11 @@ class AddPersonActionTest extends TestCase
             'language_id' => $request->languageId,
         ]);
 
-        $this->assertDatabaseCount('interests', $numberOfInterests);
+        $this->assertDatabaseCount('interest_person', $numberOfInterests);
 
-        for ($i = 1; $i <= $numberOfInterests; $i++) {
+        foreach ($request->interests as $interestId) {
             $this->assertDatabaseHas('interest_person', [
-                'interest_id' => $i,
+                'interest_id' => $interestId,
                 'person_id' => 1,
             ]);
         }
@@ -99,7 +99,7 @@ class AddPersonActionTest extends TestCase
         // --- Arrange ---------------------------------------------------------
         $southAfricanId = fake()->idNumber();
 
-        $request = new AddPersonRequest(
+        $request = new RegisterPersonRequest(
             name: fake()->firstName(),
             surname: fake()->lastName(),
             southAfricanId: $southAfricanId,
@@ -112,7 +112,7 @@ class AddPersonActionTest extends TestCase
 
         try {
             // --- Act -------------------------------------------------------------
-            $action = new AddPersonAction($request);
+            $action = new RegisterPersonAction($request);
             $action->execute();
 
             $this->fail(
@@ -122,7 +122,7 @@ class AddPersonActionTest extends TestCase
             // --- Assert ----------------------------------------------------------
             $this->assertTrue($e->errorBag->has('interests'));
             $this->assertEquals('A person must be interested in at least one topic.', $e->errorBag->first('interests'));
-            $this->assertDatabaseCount('interests', 0);
+            $this->assertDatabaseCount('interest_person', 0);
             $this->assertDatabaseCount('people', 0);
         }
     }
@@ -134,8 +134,9 @@ class AddPersonActionTest extends TestCase
     {
         // --- Arrange ---------------------------------------------------------
         $southAfricanId = fake()->idNumber();
+        $totalInterestCount = Interest::count();
 
-        $request = new AddPersonRequest(
+        $request = new RegisterPersonRequest(
             name: fake()->firstName(),
             surname: fake()->lastName(),
             southAfricanId: $southAfricanId,
@@ -143,12 +144,12 @@ class AddPersonActionTest extends TestCase
             emailAddress: fake()->safeEmail(),
             birthDate: $this->matchingBirthDate($southAfricanId),
             languageId: (Language::all()->random())->id,
-            interests: [1, 2, 3],
+            interests: [$totalInterestCount + 1],
         );
 
         try {
             // --- Act -------------------------------------------------------------
-            $action = new AddPersonAction($request);
+            $action = new RegisterPersonAction($request);
             $action->execute();
 
             $this->fail(
@@ -158,7 +159,7 @@ class AddPersonActionTest extends TestCase
             // --- Assert ----------------------------------------------------------
             $this->assertTrue($e->errorBag->has('interests'));
             $this->assertEquals('The interests do not exist.', $e->errorBag->first('interests'));
-            $this->assertDatabaseCount('interests', 0);
+            $this->assertDatabaseCount('interest_person', 0);
             $this->assertDatabaseCount('people', 0);
         }
     }
@@ -174,7 +175,7 @@ class AddPersonActionTest extends TestCase
 
         $southAfricanId = fake()->idNumber();
 
-        $request = new AddPersonRequest(
+        $request = new RegisterPersonRequest(
             name: fake()->firstName(),
             surname: fake()->lastName(),
             southAfricanId: $southAfricanId,
@@ -182,11 +183,11 @@ class AddPersonActionTest extends TestCase
             emailAddress: fake()->safeEmail(),
             birthDate: $this->matchingBirthDate($southAfricanId),
             languageId: (Language::all()->random())->id,
-            interests: (Interest::factory()->count(3)->create())->pluck('id')->all(),
+            interests: Interest::all()->random(3)->pluck('id')->all(),
         );
 
         // --- Act -------------------------------------------------------------
-        $action = new AddPersonAction($request);
+        $action = new RegisterPersonAction($request);
         $person = $action->execute();
 
         // --- Assert ----------------------------------------------------------

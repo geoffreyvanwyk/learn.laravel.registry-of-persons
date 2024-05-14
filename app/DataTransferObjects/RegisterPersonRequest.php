@@ -14,31 +14,33 @@
 // You should have received a copy of the GNU General Public License along with
 // registry-of-persons. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Database\Factories;
-
-use Illuminate\Database\Eloquent\Factories\Factory;
+namespace App\DataTransferObjects;
 
 /**
- * Creates a dummy instance of Interest model.
+ * Data transfer object used when adding a new person to the registry.
  *
- * @see  {@link https://laravel.com/docs/11.x/eloquent-factories}
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Interest>
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Person>
+ * @see        {@link https://matthiasnoback.nl/2022/09/is-it-a-dto-or-a-value-object/#what%27s-a-dto-and-how-do-you-recognize-it%3F}
+ * @see        {@link https://en.wikipedia.org/wiki/Data_transfer_object}
  * @author     Geoffrey Bernardo van Wyk <geoffrey@vanwyk.biz>
  * @copyright  2024 Geoffrey Bernardo van Wyk {@link https://geoffreyvanwyk.dev}
  * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
-class InterestFactory extends Factory
+readonly class RegisterPersonRequest
 {
     /**
-     * Define the model's default state.
+     * Create new instance of the data transfer object.
      *
-     * @return array<string, mixed>
+     * @param  array<int> $interests
      */
-    public function definition(): array
-    {
-        return [
-            'name' => fake()->unique()->word(),
-        ];
+    public function __construct(
+        public string $name,
+        public string $surname,
+        public string $southAfricanId,
+        public string $mobileNumber,
+        public string $emailAddress,
+        public string $birthDate,
+        public int $languageId,
+        public array $interests,
+    ) {
     }
 }
