@@ -37,7 +37,7 @@ return new class () extends Migration {
             $table->id();
             $table->foreignId('interest_id')->references('id')->on('interests');
             $table->foreignId('person_id')->references('id')->on('people');
-            $table->unique('interest_id', 'person_id');
+            $table->unique(['interest_id', 'person_id']);
             $table->timestamps();
         });
     }
