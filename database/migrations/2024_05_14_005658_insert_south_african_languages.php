@@ -13,17 +13,17 @@ return new class () extends Migration {
     {
         Schema::table('languages', function (Blueprint $table) {
             DB::table('languages')->insert([
-                ['code' => 'afr'], // Afrikaans
-                ['code' => 'eng'], // English
-                ['code' => 'nbl'], // Ndebele
-                ['code' => 'nso'], // Northern Sotho, Pedi
-                ['code' => 'sot'], // Southern Sotho
-                ['code' => 'ssw'], // Swati
-                ['code' => 'tsn'], // Tswana
-                ['code' => 'tso'], // Tsonga
-                ['code' => 'ven'], // Venda
-                ['code' => 'xho'], // Xhosa
-                ['code' => 'zul'], // Zulu
+                ['code' => 'afr', 'name' => 'Afrikaans'],
+                ['code' => 'eng', 'name' => 'English'],
+                ['code' => 'nbl', 'name' => 'Ndebele'],
+                ['code' => 'nso', 'name' => 'Pedi'],
+                ['code' => 'sot', 'name' => 'Sotho'],
+                ['code' => 'ssw', 'name' => 'Swati'],
+                ['code' => 'tsn', 'name' => 'Tswana'],
+                ['code' => 'tso', 'name' => 'Tsonga'],
+                ['code' => 'ven', 'name' => 'Venda'],
+                ['code' => 'xho', 'name' => 'Xhosa'],
+                ['code' => 'zul', 'name' => 'Zulu'],
             ]);
         });
     }
