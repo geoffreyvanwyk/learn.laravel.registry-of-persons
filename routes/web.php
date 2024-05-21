@@ -1,5 +1,7 @@
 <?php
 
-use Livewire\Volt\Volt;
+use Illuminate\Support\Facades\Route;
 
-Volt::route('/', 'people.index');
+use App\Livewire\PeopleTable;
+
+Route::get('/', PeopleTable::class);
