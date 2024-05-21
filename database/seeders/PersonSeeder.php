@@ -16,7 +16,7 @@ class PersonSeeder extends Seeder
      */
     public function run(): void
     {
-        $people = Person::factory()->count(10)->create();
+        $people = Person::factory()->count(100)->create();
 
         foreach ($people as $person) {
             $person->interests()->attach(Interest::all()->random(rand(1, 3))->pluck('id'));
